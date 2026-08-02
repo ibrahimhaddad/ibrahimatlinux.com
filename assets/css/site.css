@@ -1,0 +1,434 @@
+/* ==========================================================================
+   ibrahimatlinux.com — stylesheet
+   Version 2.0, static build
+
+   Structure
+     1. Tokens        change these, everything else follows
+     2. Base          element defaults
+     3. Layout        containers and sections
+     4. Components    buttons, cards, rows, filters, footer
+     5. Utilities
+     6. Responsive
+
+   There is one colour that matters, --accent. Everything else is a neutral.
+   If a section looks flat the fix is spacing or a hairline rule, not a colour.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. TOKENS
+   ========================================================================== */
+:root{
+  /* --- Colour ------------------------------------------------------------
+     Deep blue is the only strong colour. Everything else is neutral.
+     If it ever needs to change, change --accent and nothing else. */
+  --ink:            #0F172A;   /* headings */
+  --body:           #334155;   /* body copy. 9.6:1 on white */
+  --muted:          #64748B;   /* meta, dates, captions. 4.8:1 on white */
+  --line:           #E2E8F0;   /* hairline borders */
+  --line-strong:    #CBD5E1;   /* input borders, hover states */
+  --surface:        #FFFFFF;
+  --surface-alt:    #F8FAFC;   /* alternating section bands */
+  --surface-deep:   #0F2544;   /* dark CTA bands and footer */
+
+  --accent:         #14427E;   /* 10.4:1 on white — passes AAA for body text */
+  --accent-hover:   #0E3161;
+  --accent-tint:    #EEF3FA;   /* badge and chip backgrounds */
+
+  /* --- Type -------------------------------------------------------------- */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Fluid sizes. clamp(min, preferred, max) — no media queries needed. */
+  --fs-display: clamp(2.4rem, 1.4rem + 3.2vw, 3.5rem);  /* homepage H1 only */
+  --fs-h1:      clamp(2rem, 1.4rem + 2vw, 2.6rem);
+  --fs-h2:      clamp(1.5rem, 1.2rem + 1vw, 1.9rem);
+  --fs-h3:      1.2rem;
+  --fs-body:    1.0625rem;  /* 17px. Deliberately larger than the current 15-16px. */
+  --fs-small:   0.9375rem;  /* 15px */
+  --fs-micro:   0.8125rem;  /* 13px — meta and eyebrows only, never body copy */
+
+  /* --- Space ------------------------------------------------------------- */
+  --gap:        1.5rem;
+  --section-y:  clamp(3.5rem, 2rem + 5vw, 6rem);
+  --container:  1120px;
+  --container-narrow: 760px;   /* reading width, ~72 characters */
+
+  /* --- Shape ------------------------------------------------------------- */
+  --radius:     10px;
+  --radius-sm:  6px;
+  --shadow:     0 1px 2px rgba(15,23,42,.05), 0 8px 24px rgba(15,23,42,.06);
+}
+
+
+/* ==========================================================================
+   2. BASE
+   ========================================================================== */
+*,*::before,*::after{ box-sizing:border-box }
+html{ scroll-behavior:smooth }
+
+body{
+  margin:0;
+  font-family:var(--font);
+  font-size:var(--fs-body);
+  line-height:1.65;
+  color:var(--body);
+  background:var(--surface);
+  -webkit-font-smoothing:antialiased;
+}
+
+h1,h2,h3,h4,h5,h6{
+  color:var(--ink);
+  line-height:1.2;
+  margin:0 0 .6em;
+  font-weight:600;
+  letter-spacing:-.02em;
+}
+h1{ font-size:var(--fs-h1) }
+h2{ font-size:var(--fs-h2) }
+h3{ font-size:var(--fs-h3); letter-spacing:-.01em }
+
+p{ margin:0 0 1.1em }
+a{ color:var(--accent); text-decoration:none }
+a:hover{ color:var(--accent-hover); text-decoration:underline }
+img{ max-width:100%; height:auto; display:block }
+hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
+
+/* Visible focus for keyboard users. Do not remove — accessibility requirement. */
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:2px }
+
+::selection{ background:var(--accent); color:#fff }
+
+
+/* ==========================================================================
+   3. LAYOUT
+   ========================================================================== */
+.container{ width:100%; max-width:var(--container); margin-inline:auto; padding-inline:1.5rem }
+.narrow{ max-width:var(--container-narrow) }
+
+.section{ padding-block:var(--section-y) }
+.section--alt{ background:var(--surface-alt); border-block:1px solid var(--line) }
+
+.lede{ font-size:1.15rem; color:var(--body) }
+
+.eyebrow{
+  font-size:var(--fs-micro); font-weight:600; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--accent); margin:0 0 .9rem;
+}
+.section-head{ margin-bottom:2.5rem; max-width:640px }
+.section-head p{ margin-bottom:0; color:var(--muted) }
+
+.grid{ display:grid; gap:var(--gap) }
+.grid--2{ grid-template-columns:repeat(2,1fr) }
+.grid--3{ grid-template-columns:repeat(3,1fr) }
+.grid--4{ grid-template-columns:repeat(4,1fr) }
+
+
+/* ==========================================================================
+   4. COMPONENTS
+   ========================================================================== */
+
+/* --- Buttons -------------------------------------------------------------
+   Apply .btn plus one variant. On WordPress button blocks, add the class
+   in the block sidebar under Advanced → Additional CSS class(es). */
+.btn{
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.72rem 1.35rem;
+  border-radius:var(--radius-sm);
+  font-size:var(--fs-small); font-weight:600; letter-spacing:-.01em;
+  border:1px solid transparent; cursor:pointer;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+  text-decoration:none;
+}
+.btn:hover{ text-decoration:none }
+.btn--primary{ background:var(--accent); color:#fff }
+.btn--primary:hover{ background:var(--accent-hover); color:#fff }
+.btn--ghost{ background:transparent; color:var(--ink); border-color:var(--line-strong) }
+.btn--ghost:hover{ border-color:var(--accent); color:var(--accent) }
+.btn--onDark{ background:#fff; color:var(--accent) }
+.btn--onDark:hover{ background:#E8EEF7; color:var(--accent-hover) }
+.btn-row{ display:flex; flex-wrap:wrap; gap:.75rem; margin-top:1.75rem }
+
+/* --- Header --------------------------------------------------------------
+   Sticky, translucent, one hairline border. No drop shadow, no gradient. */
+.site-header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:saturate(160%) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.site-header__inner{ display:flex; align-items:center; gap:2rem; height:68px }
+.wordmark{ font-weight:700; color:var(--ink); font-size:1.02rem; letter-spacing:-.02em; white-space:nowrap }
+.wordmark:hover{ text-decoration:none; color:var(--accent) }
+.wordmark span{ color:var(--muted); font-weight:500 }
+
+.nav{ display:flex; gap:.35rem; margin-left:auto; align-items:center }
+
+/* Plain nav links. The :not(.btn) matters: without it these rules outrank
+   .btn--primary on specificity and paint the Get in touch button's label
+   slate-on-blue, which is invisible. Do not remove it. */
+.nav a:not(.btn){ padding:.45rem .7rem; border-radius:var(--radius-sm); font-size:var(--fs-small); font-weight:500; color:var(--body) }
+.nav a:not(.btn):hover{ background:var(--surface-alt); color:var(--ink); text-decoration:none }
+.nav a:not(.btn).is-active{ color:var(--accent); font-weight:600 }
+
+/* The Get in touch button. Stated again here at higher specificity so no
+   future nav rule can win against it by accident. */
+.nav .btn{ margin-left:.6rem }
+.nav a.btn--primary,
+.nav a.btn--primary:visited{ background:var(--accent); color:#fff }
+.nav a.btn--primary:hover,
+.nav a.btn--primary:focus{ background:var(--accent-hover); color:#fff; text-decoration:none }
+.nav-toggle{
+  display:none; margin-left:auto; background:none; border:1px solid var(--line-strong);
+  border-radius:var(--radius-sm); padding:.5rem .7rem; cursor:pointer; font-size:.9rem; font-family:inherit;
+}
+
+/* --- Hero ---------------------------------------------------------------- */
+.hero{ padding-block:clamp(3rem,2rem+4vw,5.5rem) clamp(3rem,2rem+4vw,5rem) }
+.hero__grid{ display:grid; grid-template-columns:1.35fr .8fr; gap:3.5rem; align-items:center }
+.hero h1{ font-size:var(--fs-display); letter-spacing:-.03em; margin-bottom:.5em }
+.hero .lede{ max-width:56ch }
+.hero__portrait{
+  border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+  aspect-ratio:4/5; background:var(--surface-alt);
+}
+.hero__portrait img{ width:100%; height:100%; object-fit:cover }
+
+/* --- Stat strip ---------------------------------------------------------- */
+.stats{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+  background:var(--line); border:1px solid var(--line);
+  border-radius:var(--radius); overflow:hidden; margin-top:3.5rem;
+}
+.stat{ background:#fff; padding:1.4rem 1.5rem }
+.stat b{ display:block; font-size:1.7rem; color:var(--ink); font-weight:700; letter-spacing:-.03em; line-height:1.1 }
+.stat span{ font-size:var(--fs-micro); color:var(--muted); text-transform:uppercase; letter-spacing:.06em; font-weight:600 }
+
+/* --- Logo bar ------------------------------------------------------------
+   Grayscale at rest so mismatched logo files stop fighting each other.
+   Colour on hover. This single rule fixes most of what looks dated today. */
+.logobar{ padding-block:2.5rem; border-block:1px solid var(--line); background:var(--surface-alt) }
+.logobar__label{
+  font-size:var(--fs-micro); text-transform:uppercase; letter-spacing:.09em;
+  color:var(--muted); font-weight:600; text-align:center; margin-bottom:1.5rem;
+}
+.logobar__row{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:2.5rem }
+.logobar__row img{ height:30px; width:auto; filter:grayscale(1); opacity:.55; transition:filter .2s, opacity .2s }
+.logobar__row img:hover{ filter:grayscale(0); opacity:1 }
+
+/* --- Cards --------------------------------------------------------------- */
+.card{
+  background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+  padding:1.6rem; transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.card:hover{ border-color:var(--line-strong); box-shadow:var(--shadow); transform:translateY(-2px) }
+.card h3{ margin-bottom:.5rem }
+.card p{ font-size:var(--fs-small); color:var(--muted); margin-bottom:0 }
+.card__link{ display:inline-block; margin-top:1rem; font-size:var(--fs-small); font-weight:600 }
+.card__num{ font-size:var(--fs-micro); font-weight:700; color:var(--accent); letter-spacing:.08em; display:block; margin-bottom:.7rem }
+
+/* --- Publication card (cover + title + meta) ----------------------------- */
+.pub{
+  display:flex; flex-direction:column; height:100%;
+  background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden; transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+.pub:hover{ border-color:var(--line-strong); box-shadow:var(--shadow); transform:translateY(-2px); text-decoration:none }
+.pub__cover{ aspect-ratio:3/4; background:var(--surface-alt); overflow:hidden; border-bottom:1px solid var(--line) }
+.pub__cover img{ width:100%; height:100%; object-fit:cover; object-position:top }
+.pub__body{ padding:1.1rem 1.15rem 1.25rem; display:flex; flex-direction:column; flex:1 }
+.pub__title{ font-size:.98rem; font-weight:600; color:var(--ink); line-height:1.35; margin:0 0 .55rem }
+.pub__meta{ margin-top:auto; display:flex; align-items:center; gap:.6rem; font-size:var(--fs-micro); color:var(--muted) }
+
+.badge{
+  display:inline-block; background:var(--accent-tint); color:var(--accent);
+  font-size:var(--fs-micro); font-weight:600; padding:.16rem .5rem; border-radius:4px;
+}
+
+/* --- Article rows -------------------------------------------------------- */
+.rows{ border-top:1px solid var(--line) }
+.row{ display:flex; gap:1.5rem; align-items:baseline; padding:1.15rem 0; border-bottom:1px solid var(--line) }
+.row:hover{ background:var(--surface-alt) }
+.row__date{ flex:0 0 105px; font-size:var(--fs-micro); color:var(--muted); text-transform:uppercase; letter-spacing:.05em; font-weight:600 }
+.row__title{ flex:1; font-weight:500; color:var(--ink); font-size:1rem; line-height:1.45 }
+.row__title a{ color:var(--ink) }
+.row__title a:hover{ color:var(--accent) }
+.row__tag{ flex:0 0 auto }
+
+/* --- Library filters ----------------------------------------------------- */
+.filters{
+  position:sticky; top:68px; z-index:20;
+  background:rgba(255,255,255,.95); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line); padding-block:1rem; margin-bottom:2.5rem;
+}
+.filters__row{ display:flex; flex-wrap:wrap; gap:.5rem; align-items:center }
+.filters__row + .filters__row{ margin-top:.65rem }
+.filters__label{ font-size:var(--fs-micro); font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); flex:0 0 62px }
+
+.chip{
+  border:1px solid var(--line-strong); background:#fff; color:var(--body);
+  font-family:inherit; font-size:var(--fs-small); font-weight:500;
+  padding:.38rem .8rem; border-radius:99px; cursor:pointer; transition:.15s;
+}
+.chip:hover{ border-color:var(--accent); color:var(--accent) }
+.chip.is-on{ background:var(--accent); border-color:var(--accent); color:#fff }
+
+.search{
+  margin-left:auto; border:1px solid var(--line-strong); border-radius:var(--radius-sm);
+  padding:.45rem .8rem; font-family:inherit; font-size:var(--fs-small); min-width:230px; color:var(--ink);
+}
+.result-count{ font-size:var(--fs-small); color:var(--muted); margin-bottom:1.25rem }
+.is-hidden{ display:none !important }
+
+/* --- Inner page header --------------------------------------------------- */
+.pagehead{ padding-block:3.25rem 2.5rem; border-bottom:1px solid var(--line); background:var(--surface-alt) }
+.pagehead h1{ margin-bottom:.35em }
+.pagehead p{ color:var(--muted); max-width:62ch; margin-bottom:0; font-size:1.08rem }
+
+/* --- Service list -------------------------------------------------------- */
+.svc{ border-top:1px solid var(--line); padding:1.6rem 0; display:grid; grid-template-columns:200px 1fr; gap:2rem; align-items:start }
+.svc h3{ margin:0; font-size:1.05rem }
+.svc p{ margin:0; font-size:var(--fs-small); color:var(--muted) }
+
+/* --- Timeline ------------------------------------------------------------ */
+.timeline{ border-left:2px solid var(--line); padding-left:1.75rem; margin-left:.3rem }
+.tl-item{ position:relative; padding-bottom:1.9rem }
+.tl-item::before{
+  content:""; position:absolute; left:calc(-1.75rem - 6px); top:.45rem;
+  width:10px; height:10px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px #fff;
+}
+.tl-item h3{ margin:0 0 .15rem; font-size:1.02rem }
+.tl-item .when{ font-size:var(--fs-micro); color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.06em; display:block; margin-bottom:.4rem }
+.tl-item p{ margin:0; font-size:var(--fs-small); color:var(--muted) }
+
+
+/* --- CTA band ------------------------------------------------------------ */
+.cta{ background:var(--surface-deep); color:#CBD8EA; padding-block:clamp(3rem,2rem+3vw,4.5rem) }
+.cta h2{ color:#fff; margin-bottom:.4em }
+.cta p{ max-width:58ch; margin-bottom:0; color:#AFC2DB }
+
+/* --- Footer -------------------------------------------------------------- */
+.site-footer{
+  background:var(--surface-deep); color:#8FA6C4;
+  padding-block:3rem 2rem; border-top:1px solid rgba(255,255,255,.08);
+  font-size:var(--fs-small);
+}
+.site-footer a{ color:#CBD8EA }
+.footer__grid{
+  display:grid; grid-template-columns:2fr 1fr 1fr; gap:2.5rem;
+  padding-bottom:2.25rem; border-bottom:1px solid rgba(255,255,255,.09);
+}
+.footer__grid h4{ color:#fff; font-size:var(--fs-micro); text-transform:uppercase; letter-spacing:.09em; margin-bottom:.9rem }
+.footer__grid ul{ list-style:none; margin:0; padding:0; display:grid; gap:.45rem }
+.footer__bottom{ display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding-top:1.5rem; font-size:var(--fs-micro) }
+
+/* --- Photo strip --------------------------------------------------------- */
+.strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem }
+.strip img{ aspect-ratio:4/3; object-fit:cover; border-radius:var(--radius-sm); width:100% }
+
+
+/* ==========================================================================
+   5. UTILITIES
+   Add these in the block editor under Advanced → Additional CSS class(es).
+   ========================================================================== */
+.u-center     { text-align:center }
+.u-muted      { color:var(--muted) }
+.u-narrow     { max-width:var(--container-narrow); margin-inline:auto }
+.u-mt-0       { margin-top:0 }
+.u-mt-1       { margin-top:1rem }
+.u-mt-2       { margin-top:2rem }
+.u-mt-3       { margin-top:3rem }
+.u-mb-0       { margin-bottom:0 }
+.u-mb-2       { margin-bottom:2rem }
+.u-nowrap     { white-space:nowrap }
+
+
+/* ==========================================================================
+   6. RESPONSIVE
+   ========================================================================== */
+@media (max-width:960px){
+  .hero__grid{ grid-template-columns:1fr; gap:2.25rem }
+  .hero__portrait{ max-width:320px; aspect-ratio:1/1 }
+  .grid--3,.grid--4{ grid-template-columns:repeat(2,1fr) }
+  .stats{ grid-template-columns:repeat(2,1fr) }
+  .svc{ grid-template-columns:1fr; gap:.5rem }
+  .footer__grid{ grid-template-columns:1fr 1fr }
+}
+
+@media (max-width:680px){
+  .nav{
+    display:none; position:absolute; top:68px; left:0; right:0;
+    background:#fff; border-bottom:1px solid var(--line);
+    flex-direction:column; align-items:stretch; padding:.75rem; gap:.15rem;
+  }
+  .nav.is-open{ display:flex }
+  .nav .btn{ margin:.5rem 0 0; justify-content:center }
+  .nav-toggle{ display:block }
+  .grid--2,.grid--3,.grid--4{ grid-template-columns:1fr }
+  .stats{ grid-template-columns:1fr 1fr }
+  .strip{ grid-template-columns:1fr 1fr }
+  .row{ flex-direction:column; gap:.3rem }
+  .row__date{ flex:none }
+  .search{ margin-left:0; width:100% }
+  .filters{ position:static }
+  .footer__grid{ grid-template-columns:1fr }
+}
+
+/* Respect the user's motion preference. */
+@media (prefers-reduced-motion:reduce){
+  *{ animation-duration:.01ms !important; transition-duration:.01ms !important; scroll-behavior:auto !important }
+}
+
+/* Print: strip chrome so the pages print cleanly. */
+@media print{
+  .site-header,.filters,.cta,.site-footer,.btn{ display:none !important }
+  body{ color:#000; font-size:11pt }
+}
+
+
+
+
+/* ==========================================================================
+   ADDITIONS FOR THE STATIC BUILD
+   ========================================================================== */
+
+/* ISBN / role line on book cards */
+.pub__note{ font-size:var(--fs-micro); color:var(--muted); margin:0 0 .55rem; line-height:1.4 }
+
+/* Skip link, keyboard users land here first */
+.skip{
+  position:absolute; left:-9999px; top:0; z-index:200;
+  background:var(--accent); color:#fff; padding:.7rem 1.1rem;
+  border-radius:0 0 var(--radius-sm) 0; font-size:var(--fs-small); font-weight:600;
+}
+.skip:focus{ left:0; text-decoration:none; color:#fff }
+
+/* Contact page routes */
+.route{
+  display:flex; gap:1.1rem; align-items:flex-start;
+  border:1px solid var(--line); border-radius:var(--radius); padding:1.5rem; background:#fff;
+}
+.route__num{
+  flex:0 0 2rem; height:2rem; border-radius:50%; background:var(--accent-tint);
+  color:var(--accent); font-weight:700; font-size:var(--fs-small);
+  display:grid; place-items:center;
+}
+.route h3{ margin:0 0 .35rem; font-size:1.05rem }
+.route p{ margin:0 0 .7rem; font-size:var(--fs-small); color:var(--muted) }
+.route p:last-child{ margin-bottom:0 }
+
+/* Empty state for the library filters */
+.empty{
+  display:none; padding:3rem 1.5rem; text-align:center; color:var(--muted);
+  border:1px dashed var(--line-strong); border-radius:var(--radius);
+}
+.empty.is-on{ display:block }
+
+/* 404 */
+.notfound{ padding-block:6rem; text-align:center }
+.notfound h1{ font-size:var(--fs-display) }
+
+/* Visible to screen readers only */
+.u-visually-hidden{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
