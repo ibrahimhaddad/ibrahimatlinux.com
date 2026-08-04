@@ -1,21 +1,52 @@
 # ibrahimatlinux.com
 
 Static site. No database, no build server, no dependencies. Plain HTML, one stylesheet,
-two small scripts.
+a handful of small scripts. Everything runs inside what GitHub Pages can serve.
 
 ## Layout
 
     index.html              home
+    404.html                dead links, carries the normal header and footer
     about/  library/  advisory/  speaking/  contact/
+    contact/thanks/         form landing page, only reached when JavaScript is off
     assets/css/site.css     the whole stylesheet, tokens at the top
     assets/js/nav.js        mobile menu
     assets/js/library.js    library filtering, progressive enhancement only
+    assets/js/external-links.js  opens outbound links and PDFs in a new tab
+    assets/js/contact.js    submits the contact form without leaving the page
     data/publications.json  all 85 library items, single source of truth
     files/                  PDFs, clean paths
     wp-content/uploads/     the same PDFs at their original WordPress paths,
                             so links published between 2010 and 2026 keep working
     tools/build.py          regenerates library and homepage from the JSON
+    tools/make-favicon.py   regenerates the IH monogram in every size
     tools/mirror-assets.sh  one-time download from the old WordPress site
+
+## Setting up the contact form
+
+**The form does not deliver mail until this is done, once.**
+
+The site is static, so it cannot send email itself. The form posts to Web3Forms,
+which relays to the address on file against an access key.
+
+1. Go to https://web3forms.com
+2. Enter `ibrahim@linux.com` and press Create Access Key
+3. Confirm the email they send
+4. Open `contact/index.html`, find `REPLACE-WITH-YOUR-WEB3FORMS-ACCESS-KEY`,
+   and paste the key in its place
+5. Commit and push
+
+Until then, every submission is refused and the visitor is told to use LinkedIn
+instead, so nothing is silently lost.
+
+**The email address never appears anywhere public.** Not in the HTML, not in the
+repository, not in the network request the browser makes. Only the access key
+travels, and a key on its own cannot be resolved back to an address. That is the
+entire reason the form exists rather than a `mailto:` link, which scrapers harvest
+within days of publication.
+
+The form also carries a honeypot field. Bots fill in every input they can find;
+people never see this one, and Web3Forms rejects anything that arrives with it set.
 
 ## Adding a publication
 
@@ -27,6 +58,20 @@ Edit `data/publications.json`, then:
 `build.py` validates the JSON first and refuses to write anything if an entry is
 malformed. It only rewrites text between `<!-- BUILD:NAME:START -->` and
 `<!-- BUILD:NAME:END -->` markers. Everything outside those is hand-edited and safe.
+
+Set `"external": true` on anything hosted elsewhere. That is what stamps
+`target="_blank"` onto the link at build time.
+
+## Regenerating the favicon
+
+Only needed if the accent colour or the heading typeface changes.
+
+    pip3 install fonttools pillow
+    python3 tools/make-favicon.py
+
+It downloads Newsreader, converts the I and H to outlines, and writes
+`favicon.ico`, `assets/img/favicon.svg`, and the three PNG sizes. The letterforms
+are baked in as paths, so the icon needs no webfont to render.
 
 ## Previewing locally
 
@@ -46,4 +91,21 @@ them. With scripting disabled the page still lists everything.
 
 Two counts are deliberately different and should not be reconciled. The homepage stat
 strip counts distinct works, excluding translations and second editions. The library
-lists every entry, including them.
+lists every entry, including them. Separately, the library is a *selection*: it holds
+what can be given away freely, while the full record of 150+ publications lives on
+Google Scholar. The library page says so.
+
+Every link leaving the site opens in a new tab. Most of that is baked into the HTML,
+by hand in the header and footer and by `build.py` for publications.
+`external-links.js` is the safety net for anything added later that was missed, so
+turning JavaScript off degrades the behaviour rather than breaking it.
+
+Two structured-data notes. Every page carries a schema.org `@graph` with a `Person`
+and a `WebSite` node, both keyed by `@id` so crawlers understand it is one person
+across six pages. `404.html` and `contact/thanks/` deliberately carry none, because
+both are `noindex`.
+
+There is one trap in `site.css`. Section 6 RESPONSIVE sits above the ADDITIONS
+section at the bottom of the file, so its media queries cannot override anything
+declared below them. Components declared in ADDITIONS get their breakpoints in the
+block at the very end of the file. The comment there explains it.

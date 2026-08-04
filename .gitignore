@@ -1,0 +1,7 @@
+# Font cached by tools/make-favicon.py. The outlines it produces are already
+# baked into assets/img/favicon.svg, so the TTF itself is a build input, not
+# an artefact worth committing.
+.newsreader-cache.ttf
+
+# macOS
+.DS_Store
