@@ -22,31 +22,32 @@ a handful of small scripts. Everything runs inside what GitHub Pages can serve.
     tools/make-favicon.py   regenerates the IH monogram in every size
     tools/mirror-assets.sh  one-time download from the old WordPress site
 
-## Setting up the contact form
+## The contact form
 
-**The form does not deliver mail until this is done, once.**
+Live and delivering. The site is static and cannot send email itself, so the form
+posts to Web3Forms, which relays to the address registered against the access key
+in `contact/index.html`.
 
-The site is static, so it cannot send email itself. The form posts to Web3Forms,
-which relays to the address on file against an access key.
+**The destination address never appears anywhere public.** Not in the HTML, not in
+this repository, not in the network request the browser makes. Only the access key
+travels, and a key cannot be resolved back to an address. That is the entire reason
+the form exists rather than a `mailto:` link, which scrapers harvest within days of
+publication.
 
-1. Go to https://web3forms.com
-2. Enter `ibrahim@linux.com` and press Create Access Key
-3. Confirm the email they send
-4. Open `contact/index.html`, find `REPLACE-WITH-YOUR-WEB3FORMS-ACCESS-KEY`,
-   and paste the key in its place
-5. Commit and push
+The access key itself is not a secret and is fine sitting in public HTML. It is a
+routing identifier. The one thing someone could do with a copied key is post to the
+form from elsewhere, which produces junk mail rather than any disclosure. If that
+ever starts, generate a replacement key at https://web3forms.com against the same
+address and swap it in.
 
-Until then, every submission is refused and the visitor is told to use LinkedIn
-instead, so nothing is silently lost.
-
-**The email address never appears anywhere public.** Not in the HTML, not in the
-repository, not in the network request the browser makes. Only the access key
-travels, and a key on its own cannot be resolved back to an address. That is the
-entire reason the form exists rather than a `mailto:` link, which scrapers harvest
-within days of publication.
+To point the form at a different inbox, create a key for that address and replace
+the `access_key` value. Nothing else changes.
 
 The form also carries a honeypot field. Bots fill in every input they can find;
 people never see this one, and Web3Forms rejects anything that arrives with it set.
+
+Worth doing once after any change: send yourself a test message from the live site
+and confirm it lands, including in spam.
 
 ## Adding a publication
 

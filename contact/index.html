@@ -147,31 +147,31 @@
       </div>
 
       <!-- ====================================================================
-           SETUP REQUIRED BEFORE THIS FORM WILL DELIVER ANYTHING
+           HOW THIS FORM DELIVERS MAIL
 
-           The access_key below is a placeholder. Until it is replaced, every
-           submission is rejected and the visitor is told to use LinkedIn.
+           There is no server here, so the form posts to Web3Forms, which relays
+           to the address registered against the access_key below.
 
-           To switch it on, once, in about two minutes:
+           The access key is live. It is safe to have in public: it is a routing
+           identifier, not a secret. Anyone can read it, and it still reveals
+           nothing about where mail goes. The destination address is never
+           written into this file, never reaches the browser, and never appears
+           in the network request. That is the whole reason the form exists
+           rather than a mailto: link, which scrapers harvest within days.
 
-             1. Go to https://web3forms.com
-             2. Enter  ibrahim@linux.com  and press Create Access Key
-             3. Confirm the email they send you
-             4. Copy the key they give you, and paste it below in place of
-                REPLACE-WITH-YOUR-WEB3FORMS-ACCESS-KEY
-             5. Commit and push
+           What the key CAN do, if someone copies it, is post to the form from
+           somewhere else. The result is junk mail, not exposure. If that ever
+           starts happening, generate a new key at https://web3forms.com against
+           the same address and swap it in here.
 
-           The email address itself is never written into this file, never
-           reaches the browser, and never appears in the network request. It
-           lives with Web3Forms, against that key. The key on its own tells a
-           scraper nothing and cannot be used to look the address up, which is
-           the reason the form is built this way rather than as a mailto: link.
+           To point the form at a different inbox: create a key for that address
+           and replace the value below. Nothing else needs to change.
            ==================================================================== -->
 
       <form id="contact-form" class="form"
             action="https://api.web3forms.com/submit" method="POST">
 
-        <input type="hidden" name="access_key" value="REPLACE-WITH-YOUR-WEB3FORMS-ACCESS-KEY">
+        <input type="hidden" name="access_key" value="00f1269a-b0e7-44af-a76d-7ef61e6f810a">
         <input type="hidden" name="from_name" value="ibrahimatlinux.com">
         <input type="hidden" name="subject" value="New enquiry from ibrahimatlinux.com">
 
