@@ -35,21 +35,42 @@
   --accent-hover:   #0E3161;
   --accent-tint:    #EEF3FA;   /* badge and chip backgrounds */
 
-  /* --- Type -------------------------------------------------------------- */
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* --- Type --------------------------------------------------------------
+     Two faces, one job each.
 
-  /* Fluid sizes. clamp(min, preferred, max) — no media queries needed. */
-  --fs-display: clamp(2.4rem, 1.4rem + 3.2vw, 3.5rem);  /* homepage H1 only */
-  --fs-h1:      clamp(2rem, 1.4rem + 2vw, 2.6rem);
-  --fs-h2:      clamp(1.5rem, 1.2rem + 1vw, 1.9rem);
-  --fs-h3:      1.2rem;
+     Newsreader is the voice. It is a serif built for screen reading, with an
+     optical size axis, so a 56px headline gets the tight fitting it needs and
+     a 20px subhead gets the open one. It carries the headings and the wordmark
+     and nothing else. The reason it is here at all: this is the site of
+     someone who has written 26 books, and a grotesque headline says software
+     company. A serif says byline.
+
+     Inter is the furniture. Body copy, navigation, meta, buttons, forms.
+     It is invisible on purpose, which is the correct job for body type.
+
+     Do not let Newsreader leak into body copy. The contrast between the two
+     is what creates hierarchy here, and it only works while each stays in
+     its lane. */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Newsreader', Iowan Old Style, Palatino, Georgia, 'Times New Roman', serif;
+
+  /* Fluid sizes. clamp(min, preferred, max) — no media queries needed.
+     Sizes stepped up from v2. With fewer boxes on the page, size and space
+     are the only things left doing the work of hierarchy, so they need range. */
+  --fs-display: clamp(2.6rem, 1.4rem + 4vw, 4.2rem);    /* homepage H1 only */
+  --fs-h1:      clamp(2.1rem, 1.4rem + 2.4vw, 3rem);
+  --fs-h2:      clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+  --fs-h3:      1.25rem;
   --fs-body:    1.0625rem;  /* 17px. Deliberately larger than the current 15-16px. */
   --fs-small:   0.9375rem;  /* 15px */
   --fs-micro:   0.8125rem;  /* 13px — meta and eyebrows only, never body copy */
 
-  /* --- Space ------------------------------------------------------------- */
+  /* --- Space -------------------------------------------------------------
+     Sections breathe harder than v2. When the borders came off the cards, the
+     page needed somewhere else to get its structure from, and this is it.
+     If a section looks crowded, the fix is here, not a new border. */
   --gap:        1.5rem;
-  --section-y:  clamp(3.5rem, 2rem + 5vw, 6rem);
+  --section-y:  clamp(4.5rem, 2.5rem + 6vw, 8rem);
   --container:  1120px;
   --container-narrow: 760px;   /* reading width, ~72 characters */
 
@@ -76,16 +97,34 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
+/* Headings are Newsreader. Note the letter-spacing: serifs are drawn with
+   their fitting already correct, so the -.02em tightening that Inter headlines
+   wanted actively damages these. Leave it at zero or a hair positive. */
 h1,h2,h3,h4,h5,h6{
   color:var(--ink);
-  line-height:1.2;
+  font-family:var(--font-display);
+  line-height:1.15;
   margin:0 0 .6em;
   font-weight:600;
-  letter-spacing:-.02em;
+  letter-spacing:0;
+  font-optical-sizing:auto;
 }
-h1{ font-size:var(--fs-h1) }
-h2{ font-size:var(--fs-h2) }
-h3{ font-size:var(--fs-h3); letter-spacing:-.01em }
+h1{ font-size:var(--fs-h1); line-height:1.08 }
+h2{ font-size:var(--fs-h2); line-height:1.12 }
+h3{ font-size:var(--fs-h3) }
+
+/* Even out the line lengths of a wrapped headline instead of leaving one
+   orphan word on the last line. Browsers without it just wrap normally. */
+h1,h2,.lede{ text-wrap:balance }
+
+/* Never break a word across lines in a headline. Newsreader at display size
+   makes a hyphenated break very visible, and "twenty-five" splitting after
+   the hyphen reads as a typo. */
+h1,h2,h3,.stat span,.claim blockquote{ hyphens:none; overflow-wrap:normal }
+
+/* h4 is only ever a footer column label, which is set in Inter as a micro
+   caps line. It is the one heading that is not display type. */
+h4{ font-family:var(--font) }
 
 p{ margin:0 0 1.1em }
 a{ color:var(--accent); text-decoration:none }
@@ -114,8 +153,37 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
   font-size:var(--fs-micro); font-weight:600; letter-spacing:.09em;
   text-transform:uppercase; color:var(--accent); margin:0 0 .9rem;
 }
-.section-head{ margin-bottom:2.5rem; max-width:640px }
-.section-head p{ margin-bottom:0; color:var(--muted) }
+.section-head{ margin-bottom:3.5rem; max-width:680px }
+.section-head p{ margin-bottom:0; color:var(--muted); font-size:1.05rem }
+
+/* --- The claim -----------------------------------------------------------
+   One statement, set large, alone on the page with nothing competing.
+
+   This is the only element on the site with no border, no background, no
+   button and no neighbour. That is the point: the page stops, says one thing
+   in the first person, and moves on. It is the difference between a site that
+   lists what someone has done and a site that tells you who they are. */
+.claim{ padding-block:clamp(4rem,3rem + 4vw,7rem) }
+
+/* Statement left, the reasoning right, sharing a top edge. Stacking them
+   instead left a column of dead space down the right of the page and made the
+   supporting paragraph a narrow tower. Side by side, the size difference
+   between the two does the work a heading and body text usually do. */
+.claim__grid{
+  display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(2.5rem,1rem + 5vw,5.5rem);
+  align-items:start;
+}
+.claim blockquote{
+  margin:0;
+  font-family:var(--font-display); font-weight:400;
+  font-size:clamp(1.9rem,1.1rem + 2.8vw,3.1rem);
+  line-height:1.18; letter-spacing:-.005em; color:var(--ink);
+  text-wrap:balance;
+}
+.claim blockquote em{ font-style:italic; color:var(--accent) }
+.claim__follow{
+  margin:.5rem 0 0; font-size:1.08rem; color:var(--muted); max-width:52ch;
+}
 
 .grid{ display:grid; gap:var(--gap) }
 .grid--2{ grid-template-columns:repeat(2,1fr) }
@@ -157,9 +225,15 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
   border-bottom:1px solid var(--line);
 }
 .site-header__inner{ display:flex; align-items:center; gap:2rem; height:68px }
-.wordmark{ font-weight:700; color:var(--ink); font-size:1.02rem; letter-spacing:-.02em; white-space:nowrap }
+
+/* The wordmark is the one place outside a heading where display type is
+   allowed. It is a name, so it gets to behave like a byline. */
+.wordmark{
+  font-family:var(--font-display); font-weight:600; color:var(--ink);
+  font-size:1.2rem; letter-spacing:0; white-space:nowrap;
+}
 .wordmark:hover{ text-decoration:none; color:var(--accent) }
-.wordmark span{ color:var(--muted); font-weight:500 }
+.wordmark span{ color:var(--muted); font-weight:400 }
 
 .nav{ display:flex; gap:.35rem; margin-left:auto; align-items:center }
 
@@ -183,25 +257,42 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
 }
 
 /* --- Hero ---------------------------------------------------------------- */
-.hero{ padding-block:clamp(3rem,2rem+4vw,5.5rem) clamp(3rem,2rem+4vw,5rem) }
-.hero__grid{ display:grid; grid-template-columns:1.35fr .8fr; gap:3.5rem; align-items:center }
-.hero h1{ font-size:var(--fs-display); letter-spacing:-.03em; margin-bottom:.5em }
-.hero .lede{ max-width:56ch }
+.hero{ padding-block:clamp(3.5rem,2rem + 5vw,7rem) clamp(3rem,2rem + 4vw,5rem) }
+.hero__grid{ display:grid; grid-template-columns:1.35fr .8fr; gap:4.5rem; align-items:center }
+
+/* Use this wherever the text column is long. Centring a portrait against four
+   paragraphs pushes it halfway down the page and leaves a hole at the top. */
+.hero__grid--top{ align-items:start }
+.hero h1{ font-size:var(--fs-display); letter-spacing:-.01em; line-height:1.05; margin-bottom:.45em }
+.hero .lede{ max-width:54ch }
+
+/* The portrait loses its radius and its shadow. A rectangular photograph
+   sitting flat on the page reads as a portrait in a book. A rounded card with
+   a drop shadow reads as a profile picture in a product UI. */
 .hero__portrait{
-  border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
-  aspect-ratio:4/5; background:var(--surface-alt);
+  overflow:hidden; aspect-ratio:4/5; background:var(--surface-alt);
 }
 .hero__portrait img{ width:100%; height:100%; object-fit:cover }
 
-/* --- Stat strip ---------------------------------------------------------- */
+/* --- Stat strip ----------------------------------------------------------
+   Was a bordered grid of four cells with hairlines between them. The borders
+   are gone. One rule above the row is enough to say "these belong together",
+   and the numbers are now large enough in display type to hold their own
+   column without a box drawn round them. */
 .stats{
-  display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
-  background:var(--line); border:1px solid var(--line);
-  border-radius:var(--radius); overflow:hidden; margin-top:3.5rem;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:2.5rem;
+  border-top:1px solid var(--line);
+  padding-top:2.25rem; margin-top:4.5rem;
 }
-.stat{ background:#fff; padding:1.4rem 1.5rem }
-.stat b{ display:block; font-size:1.7rem; color:var(--ink); font-weight:700; letter-spacing:-.03em; line-height:1.1 }
-.stat span{ font-size:var(--fs-micro); color:var(--muted); text-transform:uppercase; letter-spacing:.06em; font-weight:600 }
+.stat b{
+  display:block; font-family:var(--font-display); font-size:2.9rem;
+  color:var(--ink); font-weight:500; letter-spacing:-.01em; line-height:1;
+  margin-bottom:.4rem;
+}
+.stat span{
+  font-size:var(--fs-micro); color:var(--muted); text-transform:uppercase;
+  letter-spacing:.07em; font-weight:600; line-height:1.4; display:block; max-width:22ch;
+}
 
 /* --- Logo bar ------------------------------------------------------------
    Grayscale at rest so mismatched logo files stop fighting each other.
@@ -215,28 +306,60 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
 .logobar__row img{ height:30px; width:auto; filter:grayscale(1); opacity:.55; transition:filter .2s, opacity .2s }
 .logobar__row img:hover{ filter:grayscale(0); opacity:1 }
 
-/* --- Cards --------------------------------------------------------------- */
-.card{
-  background:#fff; border:1px solid var(--line); border-radius:var(--radius);
-  padding:1.6rem; transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
-}
-.card:hover{ border-color:var(--line-strong); box-shadow:var(--shadow); transform:translateY(-2px) }
-.card h3{ margin-bottom:.5rem }
-.card p{ font-size:var(--fs-small); color:var(--muted); margin-bottom:0 }
-.card__link{ display:inline-block; margin-top:1rem; font-size:var(--fs-small); font-weight:600 }
-.card__num{ font-size:var(--fs-micro); font-weight:700; color:var(--accent); letter-spacing:.08em; display:block; margin-bottom:.7rem }
+/* --- Cards ---------------------------------------------------------------
+   These used to be white boxes with a border, a radius, a shadow on hover and
+   a 2px lift. Four separate devices, all doing the same job of saying "this
+   is one unit", on a page where the grid already said it.
 
-/* --- Publication card (cover + title + meta) ----------------------------- */
+   Now: a hairline above each column and nothing else. The heading size, the
+   accent number, and the column gap carry the grouping. Hover moves the link,
+   not the container, because the link is the only part that is clickable and
+   the old lift implied the whole box was. */
+.card{
+  border-top:1px solid var(--ink);
+  padding-top:1.5rem;
+}
+.card h3{ margin:0 0 .6rem; font-size:1.4rem }
+.card p{ font-size:var(--fs-small); color:var(--muted); margin-bottom:0 }
+.card__link{
+  display:inline-block; margin-top:1.25rem;
+  font-size:var(--fs-small); font-weight:600;
+}
+.card__link:hover{ text-decoration:none }
+.card__link span{
+  display:inline-block; transition:transform .18s ease;
+}
+.card__link:hover span{ transform:translateX(4px) }
+.card__num{
+  font-family:var(--font-display); font-size:var(--fs-small); font-weight:600;
+  color:var(--accent); letter-spacing:.02em; display:block; margin-bottom:.8rem;
+}
+
+/* --- Publication card (cover + title + meta) -----------------------------
+   A book cover is already a rectangle with its own edge and its own artwork.
+   Wrapping it in a second rectangle with a border and a shadow was drawing
+   the same box twice. The cover now sits on the page directly, with its own
+   soft shadow for lift, and the title sits under it like a caption.
+
+   The shadow stays on the cover because a cover is a physical object and the
+   shadow reads as paper. It comes off everything else on the site. */
 .pub{
   display:flex; flex-direction:column; height:100%;
-  background:#fff; border:1px solid var(--line); border-radius:var(--radius);
-  overflow:hidden; transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
 }
-.pub:hover{ border-color:var(--line-strong); box-shadow:var(--shadow); transform:translateY(-2px); text-decoration:none }
-.pub__cover{ aspect-ratio:3/4; background:var(--surface-alt); overflow:hidden; border-bottom:1px solid var(--line) }
+.pub:hover{ text-decoration:none }
+.pub__cover{
+  aspect-ratio:3/4; background:var(--surface-alt); overflow:hidden;
+  border-radius:2px; box-shadow:0 1px 2px rgba(15,23,42,.08), 0 6px 18px rgba(15,23,42,.10);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
 .pub__cover img{ width:100%; height:100%; object-fit:cover; object-position:top }
-.pub__body{ padding:1.1rem 1.15rem 1.25rem; display:flex; flex-direction:column; flex:1 }
-.pub__title{ font-size:.98rem; font-weight:600; color:var(--ink); line-height:1.35; margin:0 0 .55rem }
+.pub:hover .pub__cover{
+  transform:translateY(-3px);
+  box-shadow:0 2px 4px rgba(15,23,42,.10), 0 14px 30px rgba(15,23,42,.16);
+}
+.pub__body{ padding:1rem 0 0; display:flex; flex-direction:column; flex:1 }
+.pub__title{ font-size:.98rem; font-weight:600; color:var(--ink); line-height:1.4; margin:0 0 .55rem }
+.pub:hover .pub__title{ color:var(--accent) }
 .pub__meta{ margin-top:auto; display:flex; align-items:center; gap:.6rem; font-size:var(--fs-micro); color:var(--muted) }
 
 .badge{
@@ -279,10 +402,20 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
 .result-count{ font-size:var(--fs-small); color:var(--muted); margin-bottom:1.25rem }
 .is-hidden{ display:none !important }
 
-/* --- Inner page header --------------------------------------------------- */
-.pagehead{ padding-block:3.25rem 2.5rem; border-bottom:1px solid var(--line); background:var(--surface-alt) }
-.pagehead h1{ margin-bottom:.35em }
-.pagehead p{ color:var(--muted); max-width:62ch; margin-bottom:0; font-size:1.08rem }
+/* --- Inner page header ---------------------------------------------------
+   The grey band and the bottom rule are gone. Every inner page opened with a
+   tinted tray, which made the site feel like a template with slots. White to
+   the top edge, and let the size of the h1 announce the page. */
+.pagehead{ padding-block:clamp(3.5rem,2.5rem + 3vw,5.5rem) 0 }
+.pagehead h1{ margin-bottom:.3em; max-width:24ch }
+.pagehead p{ color:var(--muted); max-width:58ch; margin-bottom:0; font-size:1.15rem }
+.pagehead--wide h1{ max-width:30ch }
+
+/* A page header followed immediately by a section was stacking the header's
+   own breathing room on top of a full --section-y, which opened a void big
+   enough to look like a rendering fault. The header already separates itself
+   from what follows; the section does not need to do it again. */
+.pagehead + .section{ padding-top:clamp(2.5rem,1.5rem + 2vw,3.5rem) }
 
 /* --- Service list -------------------------------------------------------- */
 .svc{ border-top:1px solid var(--line); padding:1.6rem 0; display:grid; grid-template-columns:200px 1fr; gap:2rem; align-items:start }
@@ -302,7 +435,7 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
 
 
 /* --- CTA band ------------------------------------------------------------ */
-.cta{ background:var(--surface-deep); color:#CBD8EA; padding-block:clamp(3rem,2rem+3vw,4.5rem) }
+.cta{ background:var(--surface-deep); color:#CBD8EA; padding-block:clamp(3rem,2rem + 3vw,4.5rem) }
 .cta h2{ color:#fff; margin-bottom:.4em }
 .cta p{ max-width:58ch; margin-bottom:0; color:#AFC2DB }
 
@@ -347,9 +480,9 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
    ========================================================================== */
 @media (max-width:960px){
   .hero__grid{ grid-template-columns:1fr; gap:2.25rem }
-  .hero__portrait{ max-width:320px; aspect-ratio:1/1 }
+  .hero__portrait{ max-width:340px; aspect-ratio:4/5 }
   .grid--3,.grid--4{ grid-template-columns:repeat(2,1fr) }
-  .stats{ grid-template-columns:repeat(2,1fr) }
+  .stats{ grid-template-columns:repeat(2,1fr); gap:2rem 2.5rem }
   .svc{ grid-template-columns:1fr; gap:.5rem }
   .footer__grid{ grid-template-columns:1fr 1fr }
 }
@@ -364,7 +497,8 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
   .nav .btn{ margin:.5rem 0 0; justify-content:center }
   .nav-toggle{ display:block }
   .grid--2,.grid--3,.grid--4{ grid-template-columns:1fr }
-  .stats{ grid-template-columns:1fr 1fr }
+  .stats{ grid-template-columns:1fr 1fr; gap:1.75rem }
+  .stat b{ font-size:2.2rem }
   .strip{ grid-template-columns:1fr 1fr }
   .row{ flex-direction:column; gap:.3rem }
   .row__date{ flex:none }
@@ -402,17 +536,18 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
 }
 .skip:focus{ left:0; text-decoration:none; color:#fff }
 
-/* Contact page routes */
+/* Contact page routes.
+   Was three bordered white boxes each with a filled circle badge. Now a plain
+   definition list: a hairline, a label, the text. Nothing is enclosed. */
 .route{
-  display:flex; gap:1.1rem; align-items:flex-start;
-  border:1px solid var(--line); border-radius:var(--radius); padding:1.5rem; background:#fff;
+  display:grid; grid-template-columns:170px 1fr; gap:2rem;
+  border-top:1px solid var(--line); padding:1.75rem 0;
 }
-.route__num{
-  flex:0 0 2rem; height:2rem; border-radius:50%; background:var(--accent-tint);
-  color:var(--accent); font-weight:700; font-size:var(--fs-small);
-  display:grid; place-items:center;
+.route__label{
+  font-size:var(--fs-micro); font-weight:700; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--muted); padding-top:.35rem;
 }
-.route h3{ margin:0 0 .35rem; font-size:1.05rem }
+.route h3{ margin:0 0 .5rem; font-size:1.2rem }
 .route p{ margin:0 0 .7rem; font-size:var(--fs-small); color:var(--muted) }
 .route p:last-child{ margin-bottom:0 }
 
@@ -423,9 +558,161 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
 }
 .empty.is-on{ display:block }
 
-/* 404 */
-.notfound{ padding-block:6rem; text-align:center }
-.notfound h1{ font-size:var(--fs-display) }
+/* 404.
+   Not centred any more, and no longer the whole page. The 404 now sits
+   between the normal header and the normal footer, so a dead link lands
+   somewhere that still looks like the site and still has a way out. */
+.notfound{ padding-block:clamp(4rem,3rem + 4vw,7rem) }
+.notfound h1{ font-size:var(--fs-h1); max-width:18ch }
+
+
+/* ==========================================================================
+   CONTACT FORM
+   Posts to Web3Forms. There is no server here and there never will be, so the
+   form hands off to a third party that relays to the address on file.
+
+   The address is not in this page, in the repository, or in the network
+   request. All the browser ever sees is the access key, which is a random
+   identifier that means nothing on its own. That is the entire reason this
+   service was chosen over a mailto: link.
+   ========================================================================== */
+.form{ display:grid; gap:1.4rem; max-width:620px }
+.form__row{ display:grid; gap:.45rem }
+.form__row--split{ display:grid; grid-template-columns:1fr 1fr; gap:1.4rem }
+
+.form label{
+  font-size:var(--fs-micro); font-weight:700; text-transform:uppercase;
+  letter-spacing:.07em; color:var(--muted);
+}
+.form label .req{ color:var(--accent); margin-left:.15rem }
+
+/* Underlines rather than boxes. Same reasoning as everything else on this
+   page: the label already says where the field is, so the box is redundant. */
+.form input,
+.form select,
+.form textarea{
+  font-family:inherit; font-size:var(--fs-body); color:var(--ink);
+  background:transparent; border:0; border-bottom:1px solid var(--line-strong);
+  border-radius:0; padding:.6rem 0; width:100%;
+  transition:border-color .15s ease;
+}
+.form textarea{ resize:vertical; min-height:9rem; line-height:1.6 }
+.form select{
+  appearance:none; cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748B' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right .25rem center; background-size:12px;
+  padding-right:1.75rem;
+}
+.form input:focus,
+.form select:focus,
+.form textarea:focus{
+  outline:none; border-bottom-color:var(--accent); border-bottom-width:2px;
+  padding-bottom:calc(.6rem - 1px);
+}
+.form input:focus-visible,
+.form select:focus-visible,
+.form textarea:focus-visible{ outline:none; border-radius:0 }
+
+.form__note{ font-size:var(--fs-micro); color:var(--muted); margin:0; max-width:52ch }
+.form__actions{ display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap; margin-top:.5rem }
+
+/* The honeypot. Bots fill in every field they can find; people never see this
+   one. Hidden with position, not display:none, because some bots skip fields
+   that are display:none specifically to dodge this trick. */
+.form__hp{
+  position:absolute; left:-9999px; width:1px; height:1px;
+  overflow:hidden; opacity:0;
+}
+
+/* Status line, written to by contact.js after the fetch resolves. */
+.form__status{ font-size:var(--fs-small); margin:0 }
+.form__status[data-state="error"]{ color:#9F1239 }
+.form__status[data-state="ok"]{ color:#166534 }
+.form__status[data-state="sending"]{ color:var(--muted) }
+
+
+/* ==========================================================================
+   CALENDLY
+   The widget injects a fixed-height iframe. This wrapper keeps it inside the
+   reading column and stops it from painting edge to edge on mobile.
+   ========================================================================== */
+.calendly{ margin-top:1rem; min-height:700px }
+.calendly-inline-widget{ min-width:0 !important }
+
+/* Shown only if the widget script is blocked or fails to load, so the booking
+   link never becomes a dead rectangle. */
+.calendly__fallback{ font-size:var(--fs-small); color:var(--muted) }
+
+
+/* ==========================================================================
+   FORMAL BIO
+   The third-person paragraph, kept for conference organisers and moderators
+   who ask for one. Visually set apart so it reads as a supplied asset rather
+   than as the page talking about itself in the third person.
+   ========================================================================== */
+.bio{
+  border-top:1px solid var(--line); padding-top:2rem; margin-top:1rem;
+}
+.bio__head{ display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap; margin-bottom:1.25rem }
+.bio__head h2{ margin:0; font-size:1.35rem }
+.bio p{ font-size:var(--fs-small); color:var(--muted); max-width:70ch }
+.bio p:last-child{ margin-bottom:0 }
+.bio__copy{
+  font-family:inherit; font-size:var(--fs-micro); font-weight:600;
+  color:var(--accent); background:none; border:0; padding:0; cursor:pointer;
+  text-transform:uppercase; letter-spacing:.07em;
+}
+.bio__copy:hover{ text-decoration:underline }
+
+
+/* ==========================================================================
+   MISC
+   ========================================================================== */
+
+/* Marks a link that leaves the site. Applied by external-links.js, styled
+   here so it stays a hint rather than an interruption. */
+.u-ext::after{
+  content:"↗"; font-size:.75em; margin-left:.22em;
+  display:inline-block; vertical-align:baseline; opacity:.55;
+}
+.nav .u-ext::after,
+.site-footer .u-ext::after,
+.wordmark.u-ext::after{ content:none }
+
+/* Byline under the name in the footer */
+.footer__meta{ font-size:var(--fs-micro); color:#7C93B2; margin:0 }
+
+
+/* ==========================================================================
+   RESPONSIVE FOR EVERYTHING BELOW THE MAIN RESPONSIVE SECTION
+
+   READ THIS BEFORE ADDING A COMPONENT DOWN HERE.
+
+   Section 6 RESPONSIVE sits above this block in the file. Its media queries
+   therefore cannot override anything declared after it, because at equal
+   specificity the later rule wins and a media query grants no extra
+   specificity of its own.
+
+   That already cost one bug: .route was written up in section 6 to collapse to
+   a single column on small screens, the rule was ignored because .route itself
+   is declared further down, and the contact page scrolled sideways on a phone.
+
+   So any component declared in the ADDITIONS section above gets its breakpoints
+   here, not up there. If this file is ever reorganised, the fix is to move all
+   the component declarations above section 6 and delete this block.
+   ========================================================================== */
+@media (max-width:960px){
+  .route{ grid-template-columns:1fr; gap:.6rem }
+  .route__label{ padding-top:0 }
+  .claim__grid{ grid-template-columns:1fr; gap:1.75rem }
+  .claim__follow{ max-width:62ch }
+}
+
+@media (max-width:680px){
+  .form__row--split{ grid-template-columns:1fr; gap:1.4rem }
+  .calendly{ min-height:1050px }
+  .bio__head{ gap:.35rem }
+}
 
 /* Visible to screen readers only */
 .u-visually-hidden{
