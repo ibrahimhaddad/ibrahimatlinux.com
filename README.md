@@ -63,6 +63,18 @@ malformed. It only rewrites text between `<!-- BUILD:NAME:START -->` and
 Set `"external": true` on anything hosted elsewhere. That is what stamps
 `target="_blank"` onto the link at build time.
 
+## Regenerating the social share card
+
+`assets/img/og-card.png` is what LinkedIn, X and Slack render when anyone posts a
+link to the site. Rebuild it if the claim on the homepage changes, or the portrait
+does.
+
+    pip3 install pillow
+    python3 tools/make-og-card.py
+
+Then re-scrape the URL at https://www.linkedin.com/post-inspector/ so LinkedIn
+drops its cached copy. It will otherwise keep serving the old card for weeks.
+
 ## Regenerating the favicon
 
 Only needed if the accent colour or the heading typeface changes.

@@ -5,3 +5,7 @@
 
 # macOS
 .DS_Store
+
+# Fonts cached by tools/make-og-card.py, same reasoning as above: build inputs,
+# not artefacts. The rendered card is what gets committed.
+.font-cache-*.ttf
