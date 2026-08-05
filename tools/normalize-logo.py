@@ -30,7 +30,7 @@ HOW TO RUN IT
 
 WHAT IT DOES
     Trims to the ink, then centres it on a 500x250 white canvas inside a box of
-    88% width by 60% height, preserving aspect ratio. Wide wordmarks are bound
+    88% width by 78% height, preserving aspect ratio. Wide wordmarks are bound
     by the width limit, squarer marks by the height limit, and everything lands
     in the same optical range.
 
