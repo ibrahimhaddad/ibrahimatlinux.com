@@ -29,10 +29,11 @@ HOW TO RUN IT
     its neighbours, the source art is probably cropped oddly.
 
 WHAT IT DOES
-    Trims to the ink, then centres it on a 500x250 white canvas inside a box of
-    88% width by 78% height, preserving aspect ratio. Wide wordmarks are bound
-    by the width limit, squarer marks by the height limit, and everything lands
-    in the same optical range.
+    Trims to the ink, then centres it on a 500x250 white canvas, scaled so the
+    mark's bounding box covers the same AREA as every other logo in the repo.
+    Aspect ratio is preserved, so a wide wordmark ends up long and short and a
+    roundel ends up narrow and tall, but the two take up the same amount of the
+    row. Equal area is what stops any one logo reading as dominant.
 
     Transparency is flattened onto white, because the rows sit on white and a
     transparent PNG would otherwise darken unpredictably under the greyscale
@@ -45,22 +46,38 @@ import sys
 from PIL import Image
 
 CANVAS_W, CANVAS_H = 500, 250     # every logo in the repo uses this
-MAX_INK_W = 0.88                  # binds on wide wordmarks
-MAX_INK_H = 0.78                  # binds on squarer marks with a symbol
 WHITE_CUTOFF = 230                # anything lighter counts as background
 
-# Why a bounding box and not equal ink area:
-#   Normalising every logo to the same area of dark pixels sounds more correct
-#   and looks worse. Ink area confuses size with stroke weight, so a bold
-#   wordmark like Fenwick (13.7% ink) gets shrunk while a hairline one like
-#   Debricked (6.6% ink) gets inflated, even though both currently sit
-#   correctly in the row. Fitting the bounding box keeps apparent size tied to
-#   apparent size.
+# Each logo is scaled so its bounding box covers the same AREA of the canvas.
+# Aspect ratio is preserved, so a wide wordmark comes out long and short while a
+# roundel comes out narrow and tall, and the two occupy the same amount of the
+# row. This is the number that decides whether a logo looks dominant.
+TARGET_INK_AREA = 0.238           # fraction of the 500x250 canvas
+
+# Guards only. At the target above nothing in this repo reaches either, so every
+# logo lands on exactly equal area. They exist so a freak aspect ratio cannot
+# push ink off the canvas.
+MAX_INK_W = 0.90
+MAX_INK_H = 0.82
+
+# Why area and not "fit inside a box":
+#   The first version of this script capped width at 88% and height at 78% and
+#   let whichever bind first. That silently produced a 2.9x spread in rendered
+#   area, because a 6:1 wordmark is limited by width and a 1:1 roundel by
+#   height, and those two limits describe very different amounts of ink. Jina AI
+#   came out at 1178 square pixels against Tidelift's 412. Equal area fixes it.
 #
-# Why two caps rather than one:
-#   A single width cap makes tall square marks enormous, and a single height cap
-#   makes wide wordmarks vanish. Whichever binds first wins, so a 6:1 wordmark
-#   is limited by width and a 1:1 roundel by height.
+# Which area, precisely:
+#   The BOUNDING BOX, not the count of dark pixels. Those are different metrics
+#   and only one of them works. Counting dark pixels confuses size with stroke
+#   weight, so a bold wordmark like Fenwick (13.7% of its canvas inked) would be
+#   shrunk while a hairline one like Debricked (6.6%) would be inflated, even
+#   though both already sat correctly in the row. The bounding box measures how
+#   much room a mark takes up, which is what the eye is judging.
+#
+# Note the canvas scales uniformly into the row: 500x250 becomes 60x30, x0.12 on
+# both axes. So equal area on the canvas is equal area on screen, and this can be
+# reasoned about entirely in canvas pixels.
 
 
 def ink_box(rgb):
@@ -83,9 +100,16 @@ def normalize(src_path, out_path):
         sys.exit(f'ERROR: {src_path} looks blank. Nothing darker than {WHITE_CUTOFF}.')
     ink = rgb.crop(box)
 
-    # Fit inside the box, preserving aspect. Whichever limit binds first wins.
-    scale = min(CANVAS_W * MAX_INK_W / ink.width,
+    # Scale to hit the target bounding-box area, preserving aspect ratio.
+    # area = (w*s)*(h*s) = w*h*s^2, so s = sqrt(target / (w*h)).
+    target = TARGET_INK_AREA * CANVAS_W * CANVAS_H
+    scale = (target / (ink.width * ink.height)) ** 0.5
+
+    # Then pull back if that would overflow either guard.
+    scale = min(scale,
+                CANVAS_W * MAX_INK_W / ink.width,
                 CANVAS_H * MAX_INK_H / ink.height)
+
     tw, th = max(1, round(ink.width * scale)), max(1, round(ink.height * scale))
     ink = ink.resize((tw, th), Image.LANCZOS)
 
@@ -98,13 +122,13 @@ def normalize(src_path, out_path):
     else:
         canvas.save(out_path, optimize=True)
 
-    bound = 'width' if scale == CANVAS_W * MAX_INK_W / (box[2] - box[0]) else 'height'
+    area = 100 * tw * th / (CANVAS_W * CANVAS_H)
+    capped = ('  CAPPED by width guard' if tw >= CANVAS_W * MAX_INK_W - 1 else
+              '  CAPPED by height guard' if th >= CANVAS_H * MAX_INK_H - 1 else '')
     print(f'  {os.path.basename(out_path)}')
     print(f'    source {im.size}  ->  canvas {CANVAS_W}x{CANVAS_H}')
-    print(f'    ink {tw}x{th}  =  {100*tw/CANVAS_W:.1f}% wide, '
-          f'{100*th/CANVAS_H:.1f}% tall   ({bound} limit binds)')
-    print(f'    renders {30*tw/CANVAS_W:.0f}x{30*th/CANVAS_H:.0f}px '
-          f'inside the 60x30 slot')
+    print(f'    ink {tw}x{th}   aspect {tw/th:.2f}   area {area:.1f}% of canvas{capped}')
+    print(f'    renders {60*tw/CANVAS_W:.1f}x{30*th/CANVAS_H:.1f}px in the 60x30 slot')
 
 
 def main():
