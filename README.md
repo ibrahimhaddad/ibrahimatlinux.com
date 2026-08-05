@@ -63,6 +63,34 @@ malformed. It only rewrites text between `<!-- BUILD:NAME:START -->` and
 Set `"external": true` on anything hosted elsewhere. That is what stamps
 `target="_blank"` onto the link at build time.
 
+## Adding a logo to a logo row
+
+**Run every new logo through the normaliser before committing it.**
+
+    pip3 install pillow
+    python3 tools/normalize-logo.py ~/Downloads/acme.png assets/img/collaborators/acme.jpg
+
+The rows set `img { height: 30px; width: auto }`, which means the *file's*
+canvas decides how big a logo looks, not the mark itself. Supplied logo files
+arrive on wildly different canvases, so dropping one in untouched gets you either
+a 5px smudge or something twice the size of its neighbours. Both have happened
+here.
+
+The script trims to the ink and rebuilds it on the 500x250 canvas every logo in
+this repo uses, fitting the mark inside 88% width by 78% height. Whichever limit
+binds first wins, so a wide wordmark is held by width and a square roundel by
+height. Every logo in both folders has been through it, so all 27 now render at
+exactly 60x30.
+
+It prints the resulting ink percentages; if a new logo lands far outside the
+range of its neighbours, the source art is probably cropped oddly and worth a
+second look.
+
+Then add the `<img>` to the row by hand. Collaborators on `/advisory/` are sorted
+alphabetically, ignoring a leading "The" so the Linux Foundation files under L.
+The homepage row is deliberately **not** alphabetical: it runs in employment
+order, most recent first.
+
 ## Regenerating the social share card
 
 `assets/img/og-card.png` is what LinkedIn, X and Slack render when anyone posts a
