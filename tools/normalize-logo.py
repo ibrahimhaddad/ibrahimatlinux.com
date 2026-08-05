@@ -46,8 +46,21 @@ from PIL import Image
 
 CANVAS_W, CANVAS_H = 500, 250     # every logo in the repo uses this
 MAX_INK_W = 0.88                  # binds on wide wordmarks
-MAX_INK_H = 0.60                  # binds on squarer marks with a symbol
+MAX_INK_H = 0.78                  # binds on squarer marks with a symbol
 WHITE_CUTOFF = 230                # anything lighter counts as background
+
+# Why a bounding box and not equal ink area:
+#   Normalising every logo to the same area of dark pixels sounds more correct
+#   and looks worse. Ink area confuses size with stroke weight, so a bold
+#   wordmark like Fenwick (13.7% ink) gets shrunk while a hairline one like
+#   Debricked (6.6% ink) gets inflated, even though both currently sit
+#   correctly in the row. Fitting the bounding box keeps apparent size tied to
+#   apparent size.
+#
+# Why two caps rather than one:
+#   A single width cap makes tall square marks enormous, and a single height cap
+#   makes wide wordmarks vanish. Whichever binds first wins, so a 6:1 wordmark
+#   is limited by width and a 1:1 roundel by height.
 
 
 def ink_box(rgb):

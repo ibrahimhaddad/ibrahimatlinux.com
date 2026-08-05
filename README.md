@@ -77,9 +77,14 @@ a 5px smudge or something twice the size of its neighbours. Both have happened
 here.
 
 The script trims to the ink and rebuilds it on the 500x250 canvas every logo in
-this repo uses. It prints the resulting ink percentages; if a new logo lands far
-outside the range of its neighbours, the source art is probably cropped oddly and
-worth a second look.
+this repo uses, fitting the mark inside 88% width by 78% height. Whichever limit
+binds first wins, so a wide wordmark is held by width and a square roundel by
+height. Every logo in both folders has been through it, so all 27 now render at
+exactly 60x30.
+
+It prints the resulting ink percentages; if a new logo lands far outside the
+range of its neighbours, the source art is probably cropped oddly and worth a
+second look.
 
 Then add the `<img>` to the row by hand. Collaborators on `/advisory/` are sorted
 alphabetically, ignoring a leading "The" so the Linux Foundation files under L.
