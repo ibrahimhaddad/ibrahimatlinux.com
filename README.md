@@ -14,7 +14,7 @@ a handful of small scripts. Everything runs inside what GitHub Pages can serve.
     assets/js/library.js    library filtering, progressive enhancement only
     assets/js/external-links.js  opens outbound links and PDFs in a new tab
     assets/js/contact.js    submits the contact form without leaving the page
-    data/publications.json  all 85 library items, single source of truth
+    data/publications.json  every library item, single source of truth
     files/                  PDFs, clean paths
     wp-content/uploads/     the same PDFs at their original WordPress paths,
                             so links published between 2010 and 2026 keep working
@@ -62,6 +62,27 @@ malformed. It only rewrites text between `<!-- BUILD:NAME:START -->` and
 
 Set `"external": true` on anything hosted elsewhere. That is what stamps
 `target="_blank"` onto the link at build time.
+
+### Filing one publication under two topics
+
+`topic` is normally a single string, one of `ospo`, `compliance`, `ai`,
+`government`, `ma`, `strategy`. Something that genuinely belongs under two takes
+a list instead:
+
+    "topic": "strategy"             one topic, what most entries use
+    "topic": ["strategy", "ai"]     two, the one it belongs to most first
+
+It then shows up under both filters, and the row carries a badge for each. The
+first topic leads, so order the list deliberately.
+
+**Do not add a second entry for the same piece to file it under another topic.**
+It would appear twice under All and add one to the item count.
+
+A plain string behaves exactly as it always has, so nothing needs revisiting.
+Under the hood `build.py` writes the topics into `data-topic` separated by
+spaces, and `library.js` matches against that list rather than comparing the
+whole attribute. `build.py` rejects an unknown topic, an empty list, and the
+same topic listed twice.
 
 ## Adding a logo to a logo row
 
@@ -128,7 +149,7 @@ Then open http://localhost:8000
 `CNAME` holds the custom domain. GitHub rewrites this if you change the domain in
 Settings, so leave it alone unless you are moving hosts.
 
-The library page renders all 85 items as real HTML. JavaScript only hides and shows
+The library page renders every item as real HTML. JavaScript only hides and shows
 them. With scripting disabled the page still lists everything.
 
 Two counts are deliberately different and should not be reconciled. The homepage stat
