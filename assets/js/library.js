@@ -26,8 +26,11 @@
     var shown = 0, gridShown = 0, rowsShown = 0;
 
     items.forEach(function (el) {
-      var okType  = state.type  === 'all' || el.dataset.type  === state.type;
-      var okTopic = state.topic === 'all' || el.dataset.topic === state.topic;
+      // data-topic holds one or more topics, space separated, so an item can
+      // sit under several filters at once.
+      var okType  = state.type  === 'all' || el.dataset.type === state.type;
+      var okTopic = state.topic === 'all' ||
+                    (el.dataset.topic || '').split(' ').indexOf(state.topic) > -1;
       var okQuery = !state.q || el.textContent.toLowerCase().indexOf(state.q) > -1;
       var ok = okType && okTopic && okQuery;
 

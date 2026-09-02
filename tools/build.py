@@ -31,6 +31,10 @@ ADDING A NEW PUBLICATION
       year     the year as a number, e.g. 2026
       month    the month as a number, 1 to 12
       topic    one of: ospo, compliance, ai, government, ma, strategy
+               For a piece that belongs under more than one, use a list:
+               "topic": ["strategy", "ai"]. It then appears under both
+               filters, and both labels show on the row. Put the topic it
+               belongs to most first.
       url      where it lives. "/files/2026/09/name.pdf" for something you host,
                or a full https:// address for something published elsewhere
       legacy   null, unless the file also needs to exist at an old path
@@ -62,14 +66,30 @@ def esc(s):
     return re.sub(r'&(?!(?:amp|lt|gt|quot|#\d+|middot|nbsp|rarr);)', '&amp;', s or '')
 
 
+def topics(i):
+    """An entry's topics, always as a list.
+
+    "topic": "ai"            one topic,  the original form
+    "topic": ["ai", "ospo"]  several,    the first one leads
+    """
+    t = i.get('topic')
+    return t if isinstance(t, list) else [t]
+
+
 def validate(items):
     problems = []
     for n, i in enumerate(items, 1):
         where = f'entry {n} ("{i.get("title", "no title")[:50]}")'
         if i.get('type') not in VALID_TYPES:
             problems.append(f'{where}: type must be one of {sorted(VALID_TYPES)}')
-        if i.get('topic') not in VALID_TOPICS:
-            problems.append(f'{where}: topic must be one of {sorted(VALID_TOPICS)}')
+        ts = topics(i)
+        if not ts:
+            problems.append(f'{where}: topic list is empty, give it at least one')
+        for t in ts:
+            if t not in VALID_TOPICS:
+                problems.append(f'{where}: topic "{t}" must be one of {sorted(VALID_TOPICS)}')
+        if len(ts) != len(set(ts)):
+            problems.append(f'{where}: the same topic is listed twice')
         if not i.get('url'):
             problems.append(f'{where}: url is missing')
         if not isinstance(i.get('year'), int):
@@ -89,7 +109,7 @@ def card(i):
     note = ''
     if i.get('note'):
         note = (f'\n            <p class="pub__note">{esc(i["note"])}</p>')
-    return f'''        <a class="pub" data-type="{i['type']}" data-topic="{i['topic']}" data-year="{i['year']}"
+    return f'''        <a class="pub" data-type="{i['type']}" data-topic="{' '.join(topics(i))}" data-year="{i['year']}"
            href="{html.escape(i['url'], quote=True)}"{ext_attrs(i)}>
           <div class="pub__cover">
             <img loading="lazy" src="{i['cover']}" alt="Cover of {esc(i['title'])}">
@@ -104,12 +124,13 @@ def card(i):
 
 
 def row(i):
-    return f'''        <div class="row" data-type="{i['type']}" data-topic="{i['topic']}" data-year="{i['year']}">
+    badges = ' '.join(f'<span class="badge">{TOPIC_LABEL[t]}</span>' for t in topics(i))
+    return f'''        <div class="row" data-type="{i['type']}" data-topic="{' '.join(topics(i))}" data-year="{i['year']}">
           <div class="row__date">{i['date']}</div>
           <div class="row__title">
             <a href="{html.escape(i['url'], quote=True)}"{ext_attrs(i)}>{esc(i['title'])}</a>
           </div>
-          <div class="row__tag"><span class="badge">{TOPIC_LABEL[i['topic']]}</span></div>
+          <div class="row__tag">{badges}</div>
         </div>'''
 
 
