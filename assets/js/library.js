@@ -5,8 +5,8 @@
  * and anyone with JavaScript disabled will see. This script only hides and
  * shows what is already there, so the page works fine without it.
  *
- * It reads ?type= and ?topic= from the address bar on load, and writes the
- * active filters back, so a filtered view can be bookmarked or shared.
+ * It reads ?type=, ?topic= and ?year= from the address bar on load, and writes
+ * the active filters back, so a filtered view can be bookmarked or shared.
  */
 (function () {
   'use strict';
@@ -20,7 +20,9 @@
   var heading = document.getElementById('rows-heading');
   var empty   = document.getElementById('lib-empty');
   var search  = document.querySelector('.search');
-  var state   = { type: 'all', topic: 'all', q: '' };
+  // from and to mirror the bounds of whichever year chip is active. Either can
+  // stay null, which is how the open-ended periods at each end work.
+  var state   = { type: 'all', topic: 'all', year: 'all', from: null, to: null, q: '' };
 
   function apply() {
     var shown = 0, gridShown = 0, rowsShown = 0;
@@ -31,8 +33,12 @@
       var okType  = state.type  === 'all' || el.dataset.type === state.type;
       var okTopic = state.topic === 'all' ||
                     (el.dataset.topic || '').split(' ').indexOf(state.topic) > -1;
+      var year    = parseInt(el.dataset.year, 10);
+      var okYear  = state.year === 'all' ||
+                    ((state.from === null || year >= state.from) &&
+                     (state.to   === null || year <= state.to));
       var okQuery = !state.q || el.textContent.toLowerCase().indexOf(state.q) > -1;
-      var ok = okType && okTopic && okQuery;
+      var ok = okType && okTopic && okYear && okQuery;
 
       el.classList.toggle('is-hidden', !ok);
       if (ok) {
@@ -64,6 +70,10 @@
     chip.classList.add('is-on');
     chip.setAttribute('aria-pressed', 'true');
     state[group] = value;
+    if (group === 'year') {
+      state.from = chip.dataset.from ? parseInt(chip.dataset.from, 10) : null;
+      state.to   = chip.dataset.to   ? parseInt(chip.dataset.to,   10) : null;
+    }
     return true;
   }
 
@@ -72,6 +82,7 @@
     var p = new URLSearchParams();
     if (state.type  !== 'all') p.set('type',  state.type);
     if (state.topic !== 'all') p.set('topic', state.topic);
+    if (state.year  !== 'all') p.set('year',  state.year);
     var qs = p.toString();
     window.history.replaceState({}, '', window.location.pathname + (qs ? '?' + qs : ''));
   }
@@ -92,7 +103,7 @@
   }
 
   var params = new URLSearchParams(window.location.search);
-  ['type', 'topic'].forEach(function (group) {
+  ['type', 'topic', 'year'].forEach(function (group) {
     var val = params.get(group);
     if (val) setChip(group, val);
   });

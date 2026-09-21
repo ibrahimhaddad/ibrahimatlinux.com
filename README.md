@@ -84,6 +84,28 @@ spaces, and `library.js` matches against that list rather than comparing the
 whole attribute. `build.py` rejects an unknown topic, an empty list, and the
 same topic listed twice.
 
+## Changing the library's year periods
+
+The Year row filters by period rather than by individual year. Twenty years are
+represented and four of them, 2004, 2009, 2014 and 2015, hold nothing, so a chip
+per year would be a wall of buttons with dead ends in it.
+
+The periods are plain HTML in `library/index.html`, inside the third
+`filters__row`. `build.py` does not generate or touch that row, so edit it by
+hand:
+
+    <button class="chip" data-filter="year" data-value="2019-2022"
+            data-from="2019" data-to="2022" aria-pressed="false">2019&ndash;2022</button>
+
+`data-from` and `data-to` are inclusive bounds and either can be left off for an
+open end. The newest chip carries only `data-from`, so it keeps working as years
+pass; the oldest carries only `data-to`. `data-value` is what lands in the URL,
+so keep it short and stable once a link is out in the world.
+
+The periods currently hold 38, 19, 9 and 21 items. Rebalance them when the newest
+one grows top-heavy, which it will: roughly half the library is from the last
+four years.
+
 ## Adding a logo to a logo row
 
 **Run every new logo through the normaliser before committing it.**
