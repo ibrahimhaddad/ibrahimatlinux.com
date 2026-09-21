@@ -16,6 +16,19 @@
       "note": null,
       "external": true
     },
+      {
+      "type": "ebook",
+      "title": "Getting Started with Open Source Development: A Practical Guide for New Contributors",
+      "date": "Sep 2026",
+      "year": 2026,
+      "month": 9,
+      "topic": "strategy",
+      "url": "/files/2026/07/Getting Started with OSS_Report_2026.pdf",
+      "legacy": null,
+      "cover": "/assets/img/covers/2026-09-oss-dev.png",
+      "note": null,
+      "external": false
+    },
     {
       "type": "article",
       "title": "Lessons from the Industry's Leading OSPOs",
