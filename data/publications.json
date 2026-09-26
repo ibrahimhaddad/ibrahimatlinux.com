@@ -1,5 +1,18 @@
 {
   "items": [
+      {
+      "type": "ebook",
+      "title": "Optimizing Developer Experience for High Engineering Performance: A Roadmap for Enterprises to Reduce Friction, Measure Impact and Scale Productivity in Software Delivery",
+      "date": "Sep 2026",
+      "year": 2026,
+      "month": 9,
+      "topic": "strategy",
+      "url": "/files/2026/09/DevEx_Report.pdf",
+      "legacy": null,
+      "cover": "/assets/img/covers/2026-09-devex.png",
+      "note": null,
+      "external": false
+    },
     {
       "type": "article",
       "title": "The AI Stack Through a Margin Lens: A Layer-by-Layer Walkthrough",
