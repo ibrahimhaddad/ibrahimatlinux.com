@@ -458,6 +458,14 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
 .strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem }
 .strip img{ aspect-ratio:4/3; object-fit:cover; border-radius:var(--radius-sm); width:100% }
 
+/* A strip of three, for a second row that would otherwise leave a gap. The
+   cells come out wider, so the row is taller than a four-up above it. That
+   difference is the point: it reads as a deliberate change of rhythm rather
+   than a missing image. Declared here beside .strip, not in ADDITIONS, so the
+   breakpoint in section 6 can still reach it. */
+.strip--3{ grid-template-columns:repeat(3,1fr) }
+.strip + .strip{ margin-top:.75rem }
+
 
 /* ==========================================================================
    5. UTILITIES
@@ -500,6 +508,10 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
   .stats{ grid-template-columns:1fr 1fr; gap:1.75rem }
   .stat b{ font-size:2.2rem }
   .strip{ grid-template-columns:1fr 1fr }
+  .strip--3{ grid-template-columns:1fr 1fr }
+  /* Three images in two columns leaves the last one orphaned beside a gap, so
+     it runs the full width instead and reads as a closing shot. */
+  .strip--3 img:last-child{ grid-column:span 2 }
   .row{ flex-direction:column; gap:.3rem }
   .row__date{ flex:none }
   .search{ margin-left:0; width:100% }
