@@ -116,16 +116,15 @@ every page except the library display, which is on `/library/` alone.
 search engines tie this site, ORCID and Google Scholar together as one person.
 Add any future profile there as well as to the footer.
 
-**The green iD icon is still missing.** ORCID's display guidelines ask for the
-icon beside the full `https://orcid.org/…` URI, and the library display is
-currently the URI alone. To finish it, save their `orcid.logo.icon.svg` as
-`assets/img/orcid.svg` and add the `<img>` written out in the comment above the
-link in `library/index.html`. The `.orcid__icon` rule it needs is already in
-`site.css`.
+**The icon is ORCID's official SVG, self-hosted** at `assets/img/orcid.svg`.
+Their display guidelines ask for the green mark beside the full
+`https://orcid.org/…` URI rather than the bare digits, which is why the library
+line reads the way it does.
 
-Self-host the file. The snippet ORCID hands out hotlinks the icon from their
-servers, which puts a third-party request on the page and breaks silently if
-they ever move it.
+Do not replace it with the snippet ORCID hands out. That one hotlinks the icon
+from their servers, which puts a third-party request on every page view and
+breaks silently if they move the file, and it also opens a named window instead
+of a new tab and carries a CSS class this site does not define.
 
 ## Adding a logo to a logo row
 

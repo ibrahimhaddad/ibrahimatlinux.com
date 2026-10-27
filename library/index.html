@@ -160,16 +160,14 @@
       list, including work behind publisher paywalls, is on
       <a href="https://scholar.google.com/citations?user=FD0eth0AAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>.</p>
       <!-- ORCID asks that an iD be shown as the full https://orcid.org/… URI
-           rather than the bare digits, which is why this link reads the way it
-           does. Their green iD icon belongs in front of it. To add it, save
-           orcid.logo.icon.svg as assets/img/orcid.svg and put this immediately
-           after the opening <a> tag, with no space before the text:
-
-             <img class="orcid__icon" src="/assets/img/orcid.svg" alt="" width="16" height="16">
-
-           Self-host it. Do not hotlink from orcid.org: it adds a third-party
-           request to the page and breaks silently if they move the file. -->
-      <p class="orcid"><a href="https://orcid.org/0009-0002-5528-9318" rel="me noopener" target="_blank">https://orcid.org/0009-0002-5528-9318</a></p>
+           rather than the bare digits, with their green iD icon beside it,
+           which is why this link reads the way it does. The icon is ORCID's
+           official SVG, self-hosted. Do not swap it for the img tag ORCID
+           hands out: that one hotlinks from their servers, which puts a
+           third-party request on the page and breaks if they move the file.
+           alt names the mark rather than being empty, so the link announces
+           itself as an ORCID iD and not just a bare URL. -->
+      <p class="orcid"><a href="https://orcid.org/0009-0002-5528-9318" rel="me noopener" target="_blank"><img class="orcid__icon" src="/assets/img/orcid.svg" alt="ORCID iD" width="16" height="16">https://orcid.org/0009-0002-5528-9318</a></p>
     </div>
   </section>
 
