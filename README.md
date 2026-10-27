@@ -106,6 +106,27 @@ The periods currently hold 38, 19, 9 and 21 items. Rebalance them when the newes
 one grows top-heavy, which it will: roughly half the library is from the last
 four years.
 
+## The ORCID iD
+
+The iD appears in three places: the footer "Elsewhere" list, the intro on
+`/library/`, and the `sameAs` array in the schema.org block. All three live on
+every page except the library display, which is on `/library/` alone.
+
+`sameAs` is the one that earns its keep. It is invisible to readers and is how
+search engines tie this site, ORCID and Google Scholar together as one person.
+Add any future profile there as well as to the footer.
+
+**The green iD icon is still missing.** ORCID's display guidelines ask for the
+icon beside the full `https://orcid.org/…` URI, and the library display is
+currently the URI alone. To finish it, save their `orcid.logo.icon.svg` as
+`assets/img/orcid.svg` and add the `<img>` written out in the comment above the
+link in `library/index.html`. The `.orcid__icon` rule it needs is already in
+`site.css`.
+
+Self-host the file. The snippet ORCID hands out hotlinks the icon from their
+servers, which puts a third-party request on the page and breaks silently if
+they ever move it.
+
 ## Adding a logo to a logo row
 
 **Run every new logo through the normaliser before committing it.**

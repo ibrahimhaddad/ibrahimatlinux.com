@@ -719,3 +719,13 @@ hr{ border:0; border-top:1px solid var(--line); margin:2.5rem 0 }
   position:absolute; width:1px; height:1px; padding:0; margin:-1px;
   overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
 }
+
+/* ORCID iD, shown as the full URI because ORCID's display guidelines ask for
+   that rather than the bare digits. The URI is long, so it sits a size down
+   and breaks mid-string rather than overflowing a narrow screen. */
+.orcid{ font-size:var(--fs-small); margin:.9rem 0 0 }
+.orcid a{ overflow-wrap:anywhere }
+.orcid__icon{
+  display:inline-block; width:1em; height:1em;
+  vertical-align:-.12em; margin-inline-end:.4em;
+}
